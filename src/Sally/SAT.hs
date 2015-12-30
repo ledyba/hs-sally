@@ -1,4 +1,4 @@
-module Sally.SAT (Fml(..),Var(..)) where
+module Sally.SAT (Fml(..),Var(..), var) where
 
 import Data.List (groupBy)
 import Control.Applicative ((<$>))
@@ -13,3 +13,6 @@ data Fml a = And [Fml a] | Or [Fml a] | Not (Fml a) | FVar (Var a) deriving (Sho
 instance (Hashable v) => Hashable (Var v) where
   hashWithSalt s (Var k) = s + hash k
   hashWithSalt s (TmpVar k) = s + hash k + 5432968
+
+var :: a -> Fml a
+var x = FVar (Var x)
