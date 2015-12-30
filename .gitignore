@@ -1,0 +1,10 @@
+.cabal-sandbox/
+cabal.sandbox.config
+dist/
+sat.txt
+pred.txt
+ans.txt
+bf2sat.aux
+bf2sat.hp
+bf2sat.prof
+bf2sat.ps
