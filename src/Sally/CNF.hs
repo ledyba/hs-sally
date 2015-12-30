@@ -1,6 +1,6 @@
 {-# LANGUAGE ExplicitForAll #-}
 {-# LANGUAGE ScopedTypeVariables #-}
-module Sally.CNF (CFml(..),removeNot, toCNF, makeAlias, toDIMACS) where
+module Sally.CNF (CFml(..), removeNot, toCNF, makeAlias, toDIMACS) where
 
 import Sally.SAT
 import qualified Data.HashMap.Strict as M
