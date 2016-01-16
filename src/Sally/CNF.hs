@@ -1,14 +1,20 @@
 {-# LANGUAGE ExplicitForAll #-}
 {-# LANGUAGE ScopedTypeVariables #-}
-module Sally.CNF (CFml(..), removeNot, toCNF, makeAlias, toDIMACS) where
+module Sally.CNF (CFml(..), removeNot, toCNF, makeAlias, toDIMACS, fromDIMACS) where
 
 import Sally.SAT
+import Sally.Util
 import qualified Data.HashMap.Strict as M
 import Data.HashMap.Strict ((!))
 import Control.Applicative ((<$>))
 import System.IO (withFile, IOMode( WriteMode ), Handle, hPutStr, hPutChar)
 import Data.Hashable (Hashable, hash, hashWithSalt)
 import Data.Tuple (swap)
+import Data.List.Split (splitOn)
+
+-- -----------------------------------------------------------------------------
+--  Encode
+-- -----------------------------------------------------------------------------
 
 removeNot :: Fml a -> Fml a
 removeNot (Not (And a)) = Or $ fmap (removeNot . Not) a
@@ -89,3 +95,33 @@ toDIMACS' cnf dict handle = do
 
 toDIMACS :: [[Int]] -> [(Int, Var a)] -> FilePath -> IO()
 toDIMACS cnf dict fileName = withFile fileName WriteMode (toDIMACS' cnf dict)
+
+-- -----------------------------------------------------------------------------
+--  Decode
+-- -----------------------------------------------------------------------------
+
+parseDIMACS :: String -> [(Int, Bool)]
+parseDIMACS str = ansMap
+  where
+    ans = fmap (read :: String -> Int) $ splitOn " " $ head $ tail $ splitOn "\n" str
+    0:available = reverse ans
+    ansF p  | p > 0 = (p,True)
+        | otherwise = (-p,False)
+    ansMap = fmap ansF (reverse available)
+
+fromDIMACS :: (Eq a, Hashable a) => [(Int, Var a)] -> FilePath -> IO (M.HashMap a Bool)
+fromDIMACS preds filepath =
+  do
+    buf <- readFile filepath
+    let r = parseDIMACS buf
+    let sortedR = sortOn fst r
+    let sortedP = sortOn fst preds
+    let zipped = zip sortedP sortedR
+    return (makeHash zipped M.empty)
+  where
+    makeHash [] mp = mp
+    makeHash (((_, TmpVar _),_):l) mp = makeHash l mp
+    makeHash (((idx, Var p),(idx2,ans)):l) mp =
+        if idx == idx2
+          then makeHash l (M.insert p ans mp)
+          else error "???"

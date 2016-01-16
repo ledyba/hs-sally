@@ -25,6 +25,8 @@ library
   -- other-modules:
   -- other-extensions:
   Exposed-Modules:
+              Sally
+              Sally.Util
               Sally.SAT
               Sally.CNF
   Build-Depends:        base >= 4 && < 6,parsec >= 3, containers, witherable, split, hashable, unordered-containers
