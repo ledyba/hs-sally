@@ -1,4 +1,3 @@
-{-# LANGUAGE ExplicitForAll #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 module Sally.CNF (CFml(..), removeNot, toCNF, makeAlias, toDIMACS, fromDIMACS) where
 

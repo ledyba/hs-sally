@@ -30,3 +30,15 @@ dependencies:
 
 library:
   source-dirs: src
+
+tests:
+  sally-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - sally
+    - hspec
